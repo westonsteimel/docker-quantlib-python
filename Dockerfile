@@ -18,12 +18,12 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     && curl -sL --retry 3 http://downloads.sourceforge.net/project/quantlib/QuantLib/${QUANTLIB_SWIG_VERSION}/other\ languages/QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz | \
     tar -xz --strip 1 -C ${QUANTLIB_SWIG_DIR}/ \
     && cd ${QUANTLIB_SWIG_DIR} \
+    && if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
+    && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
     && ./configure --disable-perl --disable-ruby --disable-mzscheme --disable-guile --disable-csharp --disable-ocaml --disable-r --disable-java CXXFLAGS=-O3 \
     && make && make install \
     && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
-    && apk del .build-dependencies \
-    && if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
-    && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi
+    && apk del .build-dependencies 
 
 
 CMD ["python"]
