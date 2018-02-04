@@ -1,5 +1,5 @@
-FROM westonsteimel/quantlib:%%QL_BUILDER_TAG%% as ql
-FROM python:%%PYTHON_TAG%% as ql-python
+FROM westonsteimel/quantlib:1.11-alpine3.7 as ql
+FROM python:3.6.4-alpine3.7 as ql-python
 
 COPY --from=ql /usr/lib/libQuantLib.la /usr/lib/
 COPY --from=ql /usr/lib/libQuantLib.so.0.0.0 /usr/lib/
@@ -10,7 +10,7 @@ RUN cd /usr/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so
 
 RUN ldconfig /usr/lib
 
-ARG QUANTLIB_SWIG_VERSION=%%QUANTLIB_SWIG_VERSION%%
+ARG QUANTLIB_SWIG_VERSION=1.11
 ARG QUANTLIB_SWIG_DIR=quantlib_swig
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
@@ -31,10 +31,10 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
     && apk del .build-dependencies 
 
-FROM python:%%PYTHON_TAG%%
+FROM python:3.6.4-alpine3.7
 LABEL Description="An environment with the QuantLib Python module"
 
-ARG PYTHON_LIB_PATH=%%PYTHON_LIB_PATH%%
+ARG PYTHON_LIB_PATH=python3.6
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
 RUN apk add --no-cache libstdc++
