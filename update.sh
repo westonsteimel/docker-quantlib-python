@@ -26,7 +26,8 @@ for ql_version in "${ql_versions[@]}"; do
         python_lib_path=python${python_version:0:3}
 
         for alpine_version in ${alpine_versions[@]}; do
-	    mkdir -p $ql_version/python-$python_version/$template/$alpine_version
+	    dockerfile_path=$ql_version/python$python_version/$template/$alpine_version 
+	    mkdir -p $dockerfile_path
 	    ql_builder_tag=$ql_version-$template$alpine_version
             python_tag=$python_version-$template$alpine_version
 
@@ -35,8 +36,8 @@ for ql_version in "${ql_versions[@]}"; do
 		-e 's!%%PYTHON_TAG%%!'"$python_tag"'!g' \
 	        -e 's!%%QUANTLIB_SWIG_VERSION%%!'"$ql_version"'!g' \
 		-e 's!%%PYTHON_LIB_PATH%%!'"$python_lib_path"'!g' \
-                "Dockerfile-${template}.template" > "$ql_version/python-$python_version/$template/$alpine_version/Dockerfile"
-	    echo "Generated ${ql_version}/python-${python_version}/${template}/${alpine_version}/Dockerfile"
+                "Dockerfile-${template}.template" > "$dockerfile_path/Dockerfile"
+	    echo "Generated ${dockerfile_path}/Dockerfile"
         done
     done
 done
