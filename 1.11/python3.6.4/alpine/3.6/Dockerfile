@@ -15,7 +15,7 @@ ARG QUANTLIB_SWIG_DIR=quantlib_swig
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
 RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
-    && apk add --no-cache --virtual .build-dependencies \
+    && apk --no-cache add --virtual .build-dependencies \
     linux-headers \
     build-base \
     automake \
@@ -23,13 +23,15 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     libtool \
     curl \
     swig \
+    tar \
     && curl -sL --retry 3 http://downloads.sourceforge.net/project/quantlib/QuantLib/${QUANTLIB_SWIG_VERSION}/other\ languages/QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz | \
     tar -xz --strip 1 -C ${QUANTLIB_SWIG_DIR}/ \
     && cd ${QUANTLIB_SWIG_DIR} \
     && ./configure --disable-perl --disable-ruby --disable-csharp --disable-r --disable-java CXXFLAGS=-O3 \
     && make && make install \
     && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
-    && apk del .build-dependencies 
+    && apk del .build-dependencies \
+    && rm -rf /var/cache/*
 
 FROM python:3.6.4-alpine3.6
 LABEL Description="An environment with the QuantLib Python module"
@@ -37,7 +39,7 @@ LABEL Description="An environment with the QuantLib Python module"
 ARG PYTHON_LIB_PATH=python3.6
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
-RUN apk add --no-cache libstdc++
+RUN apk --no-cache add libstdc++
 
 COPY --from=ql-python /usr/lib/libQuantLib.la /usr/lib/
 COPY --from=ql-python /usr/lib/libQuantLib.so.0.0.0 /usr/lib/
