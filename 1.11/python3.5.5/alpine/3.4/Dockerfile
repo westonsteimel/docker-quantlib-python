@@ -28,7 +28,7 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     tar -xz --strip 1 -C ${QUANTLIB_SWIG_DIR}/ \
     && cd ${QUANTLIB_SWIG_DIR} \
     && ./configure --disable-perl --disable-ruby --disable-csharp --disable-r --disable-java CXXFLAGS=-O3 \
-    && make && make install \
+    && make -C Python && make install \
     && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
     && apk del .build-dependencies \
     && rm -rf /var/cache/*
