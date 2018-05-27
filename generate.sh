@@ -16,18 +16,7 @@ sed_escape_rhs() {
 }
 
 declare -A python_alpine_versions
-python_alpine_versions=( ["3.6.4"]="3.4;3.6;3.7" ["3.5.5"]="3.4")
-
-#for i in "${pages[@]}"
-#do
-#        arr=(${i//;/ })
-#        site=${arr[0]}
-#        language=${arr[1]}
-#        protocol=${arr[2]}
-#done
-
-#python_versions=(3.6.4 3.5.5)
-#alpine_versions=(3.6 3.7)
+python_alpine_versions=( ["3.6"]="3.6;3.7" ["3.5"]="3.6;3.7")
 
 for ql_version in "${ql_versions[@]}"; do
     for python_version in ${!python_alpine_versions[@]}; do
