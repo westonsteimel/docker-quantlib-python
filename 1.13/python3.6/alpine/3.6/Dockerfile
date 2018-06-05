@@ -12,6 +12,7 @@ RUN cd /usr/local/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so
 
 RUN ldconfig /usr/local/lib
 
+ARG CONCURRENT_PROCESSES=1
 ARG QUANTLIB_SWIG_VERSION=1.13
 ARG QUANTLIB_SWIG_DIR=quantlib_swig
 ENV QUANTLIB_SWIG_VERSION=${QUANTLIB_SWIG_VERSION}
@@ -30,7 +31,7 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     tar -xz --strip 1 -C ${QUANTLIB_SWIG_DIR}/ \
     && cd ${QUANTLIB_SWIG_DIR} \
     && ./configure --disable-perl --disable-ruby --disable-csharp --disable-r --disable-java CXXFLAGS=-O3 \
-    && make -C Python && make install \
+    && make -j ${CONCURRENT_PROCESSES} -C Python && make install \
     && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
     && apk del .build-dependencies \
     && rm -rf /var/cache/*
@@ -42,16 +43,21 @@ ARG PYTHON_LIB_PATH=python3.6
 ARG QUANTLIB_SWIG_VERSION=1.13
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
-RUN apk --no-cache add libstdc++
-
 COPY --from=ql-python /usr/local/lib/libQuantLib.la /usr/local/lib/
 COPY --from=ql-python /usr/local/lib/libQuantLib.so.0.0.0 /usr/local/lib/
-RUN cd /usr/local/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so.0
-RUN cd /usr/local/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so
-RUN ldconfig /usr/local/lib
-
 COPY --from=ql-python /usr/local/lib/${PYTHON_LIB_PATH}/site-packages/QuantLib* \
                     /usr/local/lib/${PYTHON_LIB_PATH}/site-packages/
+
+RUN addgroup -g 1000 quantlib \
+    && adduser -u 1000 -G quantlib -s /bin/sh -D quantlib \
+    && apk --no-cache add libstdc++ \
+    && cd /usr/local/lib \
+    && ln -s libQuantLib.so.0.0.0 libQuantLib.so.0 \
+    && ln -s libQuantLib.so.0.0.0 libQuantLib.so \
+    && ldconfig /usr/local/lib \
+    && chmod -R +x /usr/local/lib/
+
+USER quantlib
 
 CMD ["python"]
 
