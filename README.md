@@ -3,3 +3,10 @@ Dockerized environment with [QuantLib](http://quantlib.org) and python based on 
 
 ## Pull command
 `docker pull quay.io/westonsteimel/quantlib-python`
+
+## Usage notes
+The following will launch an interactive python interpreter within the dcker container:
+
+`docker run --rm -it --cap-drop all quay.io/westonsteimel/quantlib-python python`
+
+Everything within the container executes as the non-root `quantlib` user by default
