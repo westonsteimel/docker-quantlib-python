@@ -17,8 +17,11 @@ sed_escape_rhs() {
 
 declare -A python_alpine_versions
 python_alpine_versions=( ["3.6"]="3.6;3.7" ["3.5"]="3.6;3.7")
+declare -A ql_checksums
+ql_checksums=(["1.12"]="aae1f29881fc23f0b8bd85a9730308610974418112ab0d55b2745de9d7c7410a" ["1.13"]="0ab99d6a43b2a204d6366fb600aa3cd049ee29e1d0406fefaedcc0f4fd9c65c2")
 
 for ql_version in "${ql_versions[@]}"; do
+    ql_checksum=${ql_checksums[$ql_version]}
     for python_version in ${!python_alpine_versions[@]}; do
         echo "Generating Dockerfiles for QuantLib version ${ql_version} and Python version ${python_version}."
         template=alpine
@@ -36,6 +39,7 @@ for ql_version in "${ql_versions[@]}"; do
 	        -e 's!%%QL_BUILDER_TAG%%!'"$ql_builder_tag"'!g' \
 		-e 's!%%PYTHON_TAG%%!'"$python_tag"'!g' \
 	        -e 's!%%QUANTLIB_SWIG_VERSION%%!'"$ql_version"'!g' \
+		-e 's!%%QUANTLIB_SWIG_CHECKSUM%%!'"$ql_checksum"'!g' \
 		-e 's!%%PYTHON_LIB_PATH%%!'"$python_lib_path"'!g' \
                 "Dockerfile-${template}.template" > "$dockerfile_path/Dockerfile"
 	    echo "Generated ${dockerfile_path}/Dockerfile"
