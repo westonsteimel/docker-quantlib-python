@@ -20,6 +20,7 @@ ENV QUANTLIB_SWIG_VERSION=${QUANTLIB_SWIG_VERSION}
 ENV QUANTLIB_SWIG_CHECKSUM=${QUANTLIB_SWIG_CHECKSUM}
 
 RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
+    && apk --no-cache upgrade \
     && apk --no-cache add --virtual .build-dependencies \
     linux-headers \
     build-base \
@@ -53,6 +54,7 @@ COPY --from=ql-python /usr/local/lib/${PYTHON_LIB_PATH}/site-packages/QuantLib* 
 
 RUN addgroup -g 1000 quantlib \
     && adduser -u 1000 -G quantlib -s /bin/sh -D quantlib \
+    && apk --no-cache upgrade \
     && apk --no-cache add libstdc++ \
     && cd /usr/local/lib \
     && ln -s libQuantLib.so.0.0.0 libQuantLib.so.0 \
