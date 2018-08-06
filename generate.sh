@@ -16,7 +16,7 @@ sed_escape_rhs() {
 }
 
 declare -A python_alpine_versions
-python_alpine_versions=(["3.7"]="3.6;3.7"  ["3.6"]="3.6;3.7" ["3.5"]="3.6;3.7" ["3.4"]="3.6;3.7")
+python_alpine_versions=(["3.7"]="3.6;3.7;3.8"  ["3.6"]="3.6;3.7;3.8" ["3.5"]="3.6;3.7;3.8" ["3.4"]="3.6;3.7;3.8")
 declare -A ql_checksums
 ql_checksums=(["1.12"]="aae1f29881fc23f0b8bd85a9730308610974418112ab0d55b2745de9d7c7410a" ["1.13"]="0ab99d6a43b2a204d6366fb600aa3cd049ee29e1d0406fefaedcc0f4fd9c65c2")
 
