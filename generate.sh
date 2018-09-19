@@ -18,8 +18,8 @@ sed_escape_rhs() {
 declare -A python_alpine_versions
 python_alpine_versions=(["3.7"]="3.7;3.8"  ["3.6"]="3.7;3.8" ["3.5"]="3.7;3.8" ["3.4"]="3.7;3.8")
 declare -A ql_checksums
-ql_checksums=(["1.12"]="aae1f29881fc23f0b8bd85a9730308610974418112ab0d55b2745de9d7c7410a" ["1.13"]="0ab99d6a43b2a204d6366fb600aa3cd049ee29e1d0406fefaedcc0f4fd9c65c2")
-
+ql_checksums=(["1.12.1"]="aae1f29881fc23f0b8bd85a9730308610974418112ab0d55b2745de9d7c7410a" ["1.13"]="0ab99d6a43b2a204d6366fb600aa3cd049ee29e1d0406fefaedcc0f4fd9c65c2")
+echo "${ql_versions}"
 for ql_version in "${ql_versions[@]}"; do
     ql_checksum=${ql_checksums[$ql_version]}
     for python_version in ${!python_alpine_versions[@]}; do
@@ -27,22 +27,28 @@ for ql_version in "${ql_versions[@]}"; do
         template=alpine
         echo "Generating templates for ${template}"
         python_lib_path=python${python_version:0:3}
-	alpine_versions=(${python_alpine_versions[$python_version]//;/ })
+	    alpine_versions=(${python_alpine_versions[$python_version]//;/ })
 
         for alpine_version in ${alpine_versions[@]}; do
-	    dockerfile_path=$ql_version/python$python_version/$template/$alpine_version 
-	    mkdir -p $dockerfile_path
-	    ql_builder_tag=$ql_version-$template$alpine_version
+	        dockerfile_path=$ql_version/python$python_version/$template/$alpine_version 
+	        mkdir -p $dockerfile_path
+            ql_builder_tag=$ql_version-$template$alpine_version
             python_tag=$python_version-$template$alpine_version
 
-	    sed -r \
-	        -e 's!%%QL_BUILDER_TAG%%!'"$ql_builder_tag"'!g' \
-		-e 's!%%PYTHON_TAG%%!'"$python_tag"'!g' \
-	        -e 's!%%QUANTLIB_SWIG_VERSION%%!'"$ql_version"'!g' \
-		-e 's!%%QUANTLIB_SWIG_CHECKSUM%%!'"$ql_checksum"'!g' \
-		-e 's!%%PYTHON_LIB_PATH%%!'"$python_lib_path"'!g' \
+            ql_swig_version="${ql_version}"
+            if [ "${ql_swig_version}" = "1.12.1" ]; then
+                #1.12.1 was a bugfix release of QuantLib, but there was no corresponding release of QuantLib SWIG, so use 1.12
+                ql_swig_version="1.12"
+            fi
+
+	        sed -r \
+	            -e 's!%%QL_BUILDER_TAG%%!'"$ql_builder_tag"'!g' \
+		        -e 's!%%PYTHON_TAG%%!'"$python_tag"'!g' \
+	            -e 's!%%QUANTLIB_SWIG_VERSION%%!'"$ql_swig_version"'!g' \
+		        -e 's!%%QUANTLIB_SWIG_CHECKSUM%%!'"$ql_checksum"'!g' \
+		        -e 's!%%PYTHON_LIB_PATH%%!'"$python_lib_path"'!g' \
                 "Dockerfile-${template}.template" > "$dockerfile_path/Dockerfile"
-	    echo "Generated ${dockerfile_path}/Dockerfile"
+	        echo "Generated ${dockerfile_path}/Dockerfile"
         done
     done
 done

@@ -1,5 +1,5 @@
-FROM quay.io/westonsteimel/quantlib:1.12-alpine3.8 as ql
-FROM python:3.4-alpine3.8 as ql-python
+FROM quay.io/westonsteimel/quantlib:1.12.1-alpine3.7 as ql
+FROM python:3.7-alpine3.7 as ql-python
 
 COPY --from=ql /usr/local/lib/libQuantLib.la /usr/local/lib/
 COPY --from=ql /usr/local/lib/libQuantLib.so.0.0.0 /usr/local/lib/
@@ -40,10 +40,10 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     && apk del .build-dependencies \
     && rm -rf /var/cache/*
 
-FROM python:3.4-alpine3.8
+FROM python:3.7-alpine3.7
 LABEL Description="An environment with the QuantLib Python module"
 
-ARG PYTHON_LIB_PATH=python3.4
+ARG PYTHON_LIB_PATH=python3.7
 ARG QUANTLIB_SWIG_VERSION=1.12
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
