@@ -19,9 +19,9 @@ declare -A python_alpine_versions
 python_alpine_versions=(["3.7"]="3.7;3.8"  ["3.6"]="3.7;3.8" ["3.5"]="3.7;3.8" ["3.4"]="3.7;3.8")
 latest_alpine=3.8
 latest_python=3.7
-latest_ql=1.13
+latest_ql=1.14
 imagebase="westonsteimel/quantlib-python"
-repos=("" "quay.io")
+repos=("quay.io")
 
 for version in "${versions[@]}"; do
     for python_version in ${!python_alpine_versions[@]}; do
