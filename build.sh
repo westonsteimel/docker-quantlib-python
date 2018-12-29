@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 versions=( "$@" )
-if [ ${#versions[@]} -eq 0 ]; then
+if [ "${#versions[@]}" -eq 0 ]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
@@ -24,18 +24,19 @@ imagebase="westonsteimel/quantlib-python"
 repos=("quay.io")
 
 for version in "${versions[@]}"; do
-    for python_version in ${!python_alpine_versions[@]}; do
+    for python_version in "${!python_alpine_versions[@]}"; do
         echo "Building Dockerfiles for QuantLib version ${version} and Python version ${python_version}."
         template=alpine
         alpine_versions=(${python_alpine_versions[$python_version]//;/ })
         
-        for alpine_version in ${alpine_versions[@]}; do
+        for alpine_version in "${alpine_versions[@]}"; do
+            (
             cd "${version}/python${python_version}/${template}/${alpine_version}"
             build_tag="${imagebase}:${version}-python${python_version}-${template}${alpine_version}"
             echo "Building ${build_tag}..."
             time docker build --build-arg "CONCURRENT_PROCESSES=4" -t "${build_tag}" .
 
-            for repo in ${repos[@]}; do 
+            for repo in "${repos[@]}"; do 
                 repobase="${imagebase}"
                 if [ "$repo" != "" ]; then
                     repobase="${repo}/${imagebase}"
@@ -70,7 +71,7 @@ for version in "${versions[@]}"; do
                     docker tag "${build_tag}" "${repobase}:${version}-python3"
                 fi
             done
-            cd -
+            )
         done
     done
 done
