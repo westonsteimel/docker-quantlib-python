@@ -31,17 +31,17 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     swig \
     tar \
     && cd ${QUANTLIB_SWIG_DIR} \
-    && curl -L --retry 3 https://github.com/lballabio/QuantLib-SWIG/releases/download/QuantLib-SWIG-v${QUANTLIB_SWIG_VERSION}/QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz -o quantlib-swig.tar.gz \
+    && curl -fSL --retry 3 https://github.com/lballabio/QuantLib-SWIG/releases/download/QuantLib-SWIG-v${QUANTLIB_SWIG_VERSION}/QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz -o quantlib-swig.tar.gz \
     && echo "${QUANTLIB_SWIG_CHECKSUM}  quantlib-swig.tar.gz" | sha256sum -c \
     && tar -xzf quantlib-swig.tar.gz --strip 1 \
-    && ./configure --disable-perl --disable-ruby --disable-csharp --disable-r --disable-java CXXFLAGS=-O3 \
-    && make -j ${CONCURRENT_PROCESSES} -C Python && make install \
+    && ./configure --disable-perl --disable-ruby --disable-csharp --disable-r --disable-java CXXFLAGS='-g0 -O3' \
+    && make -j ${CONCURRENT_PROCESSES} -C Python && pip install ./Python/ \
     && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
     && apk del .build-dependencies \
     && rm -rf /var/cache/*
 
 FROM python:3.7-alpine3.8
-LABEL Description="An environment with the QuantLib Python module"
+LABEL description="An Alpine Linux environment with the QuantLib Python module"
 
 ARG PYTHON_LIB_PATH=python3.7
 ARG QUANTLIB_SWIG_VERSION=1.14
@@ -49,7 +49,7 @@ ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
 COPY --from=ql-python /usr/local/lib/libQuantLib.la /usr/local/lib/
 COPY --from=ql-python /usr/local/lib/libQuantLib.so.0.0.0 /usr/local/lib/
-COPY --from=ql-python /usr/local/lib/${PYTHON_LIB_PATH}/site-packages/QuantLib* \
+COPY --from=ql-python /root/QuantLib* \
                     /usr/local/lib/${PYTHON_LIB_PATH}/site-packages/
 
 RUN addgroup -g 1000 quantlib \
