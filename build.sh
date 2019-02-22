@@ -19,7 +19,7 @@ declare -A python_alpine_versions
 python_alpine_versions=(["3.7"]="3.8;3.9"  ["3.6"]="3.8;3.9" ["3.5"]="3.8;3.9")
 latest_alpine=3.9
 latest_python=3.7
-latest_ql=1.14
+latest_ql=1.15
 imagebase="westonsteimel/quantlib-python"
 repos=("" "quay.io")
 

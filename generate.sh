@@ -18,7 +18,7 @@ sed_escape_rhs() {
 declare -A python_alpine_versions
 python_alpine_versions=(["3.7"]="3.8;3.9"  ["3.6"]="3.8;3.9" ["3.5"]="3.8;3.9")
 declare -A ql_checksums
-ql_checksums=(["1.13"]="0ab99d6a43b2a204d6366fb600aa3cd049ee29e1d0406fefaedcc0f4fd9c65c2" ["1.14"]="c8e81e41eaeb40a8268d44c33bafee56ae2bf15b777cf2b9ca0a07c6603a4f45")
+ql_checksums=(["1.13"]="0ab99d6a43b2a204d6366fb600aa3cd049ee29e1d0406fefaedcc0f4fd9c65c2" ["1.14"]="c8e81e41eaeb40a8268d44c33bafee56ae2bf15b777cf2b9ca0a07c6603a4f45" ["1.15"]="bb177822d473c8bd87579ef39b261ca32227fb5492ebd5e21db2e8f090cbc8c6")
 echo "${ql_versions}"
 for ql_version in "${ql_versions[@]}"; do
     ql_checksum=${ql_checksums[$ql_version]}

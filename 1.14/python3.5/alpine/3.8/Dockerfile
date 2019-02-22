@@ -30,13 +30,13 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     curl \
     swig \
     tar \
+    ca-certificates \
     && cd ${QUANTLIB_SWIG_DIR} \
     && curl -fSL --retry 3 https://github.com/lballabio/QuantLib-SWIG/releases/download/QuantLib-SWIG-v${QUANTLIB_SWIG_VERSION}/QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz -o quantlib-swig.tar.gz \
     && echo "${QUANTLIB_SWIG_CHECKSUM}  quantlib-swig.tar.gz" | sha256sum -c \
     && tar -xzf quantlib-swig.tar.gz --strip 1 \
-    && ./configure --disable-perl --disable-ruby --disable-csharp --disable-r --disable-java CXXFLAGS='-g0 -O3' \
-    && make -j ${CONCURRENT_PROCESSES} -C Python && pip install ./Python/ \
-    && cd .. && rm -rf ${QUANTLIB_SWIG_DIR} \
+    && cd Python \
+    && CXXFLAGS='-g0 -O3' python setup.py bdist_wheel \
     && apk del .build-dependencies \
     && rm -rf /var/cache/*
 
@@ -49,8 +49,7 @@ ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
 COPY --from=ql-python /usr/local/lib/libQuantLib.la /usr/local/lib/
 COPY --from=ql-python /usr/local/lib/libQuantLib.so.0.0.0 /usr/local/lib/
-COPY --from=ql-python /root/QuantLib* \
-                    /usr/local/lib/${PYTHON_LIB_PATH}/site-packages/
+COPY --from=ql-python /quantlib_swig/Python/dist/QuantLib_Python*.whl /tmp
 
 RUN addgroup -g 1000 quantlib \
     && adduser -u 1000 -G quantlib -s /bin/sh -D quantlib \
@@ -59,6 +58,7 @@ RUN addgroup -g 1000 quantlib \
     && cd /usr/local/lib \
     && ln -s libQuantLib.so.0.0.0 libQuantLib.so.0 \
     && ln -s libQuantLib.so.0.0.0 libQuantLib.so \
+	&& pip install /tmp/QuantLib_Python*.whl \
     && ldconfig /usr/local/lib \
     && chmod -R +x /usr/local/lib/
 
