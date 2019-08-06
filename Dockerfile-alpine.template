@@ -1,4 +1,4 @@
-FROM quay.io/westonsteimel/quantlib:%%QL_BUILDER_TAG%% as ql
+FROM westonsteimel/quantlib:%%QL_BUILDER_TAG%% as ql
 FROM python:%%PYTHON_TAG%% as ql-python
 
 COPY --from=ql /usr/local/lib/libQuantLib.la /usr/local/lib/

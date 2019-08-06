@@ -1,4 +1,4 @@
-FROM quay.io/westonsteimel/quantlib:1.16-alpine3.10 as ql
+FROM westonsteimel/quantlib:1.16-alpine3.10 as ql
 FROM python:3.7-alpine3.10 as ql-python
 
 COPY --from=ql /usr/local/lib/libQuantLib.la /usr/local/lib/
