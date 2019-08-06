@@ -21,7 +21,7 @@ latest_alpine=3.9
 latest_python=3.7
 latest_ql=1.15
 imagebase="westonsteimel/quantlib-python"
-repos=("" "quay.io")
+repos=("")
 
 for version in "${versions[@]}"; do
     for python_version in "${!python_alpine_versions[@]}"; do
