@@ -1,5 +1,5 @@
-FROM quay.io/westonsteimel/quantlib:1.15-alpine3.9 as ql
-FROM python:3.7-alpine3.9 as ql-python
+FROM quay.io/westonsteimel/quantlib:1.16-alpine3.10 as ql
+FROM python:3.7-alpine3.10 as ql-python
 
 COPY --from=ql /usr/local/lib/libQuantLib.la /usr/local/lib/
 COPY --from=ql /usr/local/lib/libQuantLib.so.0.0.0 /usr/local/lib/
@@ -13,9 +13,9 @@ RUN cd /usr/local/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so
 RUN ldconfig /usr/local/lib
 
 ARG CONCURRENT_PROCESSES=1
-ARG QUANTLIB_SWIG_VERSION=1.15
+ARG QUANTLIB_SWIG_VERSION=1.16
 ARG QUANTLIB_SWIG_DIR=quantlib_swig
-ARG QUANTLIB_SWIG_CHECKSUM=bb177822d473c8bd87579ef39b261ca32227fb5492ebd5e21db2e8f090cbc8c6
+ARG QUANTLIB_SWIG_CHECKSUM=5087b0d9dc13bf276f95e06f16153ace6fe24e152c69e511e132d90000d0668f
 ENV QUANTLIB_SWIG_VERSION=${QUANTLIB_SWIG_VERSION}
 ENV QUANTLIB_SWIG_CHECKSUM=${QUANTLIB_SWIG_CHECKSUM}
 
@@ -40,11 +40,11 @@ RUN mkdir -p ${QUANTLIB_SWIG_DIR} \
     && apk del .build-dependencies \
     && rm -rf /var/cache/*
 
-FROM python:3.7-alpine3.9
+FROM python:3.7-alpine3.10
 LABEL description="An Alpine Linux environment with the QuantLib Python module"
 
 ARG PYTHON_LIB_PATH=python3.7
-ARG QUANTLIB_SWIG_VERSION=1.15
+ARG QUANTLIB_SWIG_VERSION=1.16
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
 
 COPY --from=ql-python /usr/local/lib/libQuantLib.la /usr/local/lib/
